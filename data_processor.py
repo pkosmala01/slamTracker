@@ -9,16 +9,16 @@ class Dataset:
         headers = ["name", "player_id", "nationality"]
         self._players_list = self.create_unique_list_from_all(columns, headers)
         columns = ["loser_name", "loser_id", "loser_ioc"]
-        self._players_list = self.create_unique_list_from_all(columns, headers)
+        self._players_list += self.create_unique_list_from_all(columns, headers)
 
     def create_unique_list_from_all(self, columns, headers):
         item_list = []
         last_year = self._last_year
         path = self._path
-        for year in range(2000, last_year):
+        for year in range(2000, last_year + 1):
             temp_path = path + str(year) + ".csv"
             item_list = self.create_unique_list(temp_path, item_list, columns, headers)
-        return item_list, len(item_list)
+        return item_list
 
     def create_unique_list(self, path, item_list, columns, headers):
         data = pd.read_csv(path, usecols=columns)
@@ -30,13 +30,29 @@ class Dataset:
                 item_list.append(unique_item)
         return item_list
 
+    def get_player_data_from_name(self, name):
+        for player in self._players_list:
+            if player["name"] == name:
+                return player
+
     def get_players_list(self):
         return self._players_list
 
 
 class Player:
-    def __init__(self, name, hand, nationality, record, best_finish, best_finish_g, titles):
-        pass
+    def __init__(self, name, dataset):
+        self._name = name
+        self._dataset = dataset
+        player_data = dataset.get_player_data_from_name(name)
+        self._player_id = player_data["player_id"]
+        self._nationality = player_data["nationality"]
+
+    def __str__(self):
+        name = self._name
+        player_id = self._player_id
+        nationality = self._nationality
+        info = f'{name}, id: {player_id}, nationality: {nationality}'
+        return info
 
 
 class Tournament:
@@ -44,5 +60,7 @@ class Tournament:
         pass
 
 
-my_data = Dataset(2016, "data/atp_matches_")
+my_data = Dataset(2015, "data/atp_matches_")
 print(my_data.get_players_list())
+player1 = Player("Rodrigo Arus", my_data)
+print(str(player1))
