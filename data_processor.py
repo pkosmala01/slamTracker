@@ -5,27 +5,30 @@ class Dataset:
     def __init__(self, last_year, path):
         self._last_year = last_year
         self._path = path
-        self._players_list = self.create_list_from_all()
+        columns = ["winner_name", "winner_id", "winner_ioc"]
+        headers = ["name", "player_id", "nationality"]
+        self._players_list = self.create_unique_list_from_all(columns, headers)
+        columns = ["loser_name", "loser_id", "loser_ioc"]
+        self._players_list = self.create_unique_list_from_all(columns, headers)
 
-    def create_list_from_all(self):
-        players_list = []
+    def create_unique_list_from_all(self, columns, headers):
+        item_list = []
         last_year = self._last_year
         path = self._path
         for year in range(2000, last_year):
             temp_path = path + str(year) + ".csv"
-            players_list = self.create_players_list(temp_path, players_list)
-        return players_list
+            item_list = self.create_unique_list(temp_path, item_list, columns, headers)
+        return item_list, len(item_list)
 
-    def create_players_list(self, path, players_list):
-        columns = ["winner_name", "loser_name"]
+    def create_unique_list(self, path, item_list, columns, headers):
         data = pd.read_csv(path, usecols=columns)
-        for player in data["winner_name"]:
-            if player not in players_list:
-                players_list.append(player)
-        for player in data["loser_name"]:
-            if player not in players_list:
-                players_list.append(player)
-        return players_list
+        for item in data[columns].values:
+            unique_item = {}
+            for key_iterator in range(0, len(headers)):
+                unique_item[headers[key_iterator]] = item[key_iterator]
+            if unique_item not in item_list:
+                item_list.append(unique_item)
+        return item_list
 
     def get_players_list(self):
         return self._players_list
