@@ -31,4 +31,4 @@ def test_new_tournament_typical():
     my_data = Dataset(2001, "test_data/tournaments")
     my_tournament = Tournament("Australian Open", my_data)
     info = str(my_tournament)
-    assert info == "Australian Open, surface: Hard, 128 players, level: G"
+    assert info == "Australian Open"

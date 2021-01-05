@@ -10,8 +10,8 @@ class Dataset:
         self._players_list = self.create_unique_list_from_all(columns, headers)
         columns = ["loser_name", "loser_id", "loser_ioc"]
         self._players_list += self.create_unique_list_from_all(columns, headers)
-        columns = ["tourney_name", "surface", "draw_size", "tourney_level"]
-        headers = ["name", "surface", "draw_size", "level"]
+        columns = ["tourney_name"]
+        headers = ["name"]
         self._tournaments_list = self.create_unique_list_from_all(columns, headers)
 
     def create_unique_list_from_all(self, columns, headers):
@@ -37,11 +37,6 @@ class Dataset:
         for player in self._players_list:
             if player["name"] == name:
                 return player
-
-    def get_tournament_data_from_name(self, name):
-        for tournament in self._tournaments_list:
-            if tournament["name"] == name:
-                return tournament
 
     def get_players_list(self):
         return self._players_list
@@ -70,17 +65,10 @@ class Tournament:
     def __init__(self, name, dataset):
         self._name = name
         self._dataset = dataset
-        tournament_data = dataset.get_tournament_data_from_name(name)
-        self._surface = tournament_data["surface"]
-        self._draw_size = tournament_data["draw_size"]
-        self._level = tournament_data["level"]
 
     def __str__(self):
         name = self._name
-        surface = self._surface
-        draw_size = self._draw_size
-        level = self._level
-        info = f'{name}, surface: {surface}, {draw_size} players, level: {level}'
+        info = f'{name}'
         return info
 
 
