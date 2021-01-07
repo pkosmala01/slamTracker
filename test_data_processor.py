@@ -32,3 +32,23 @@ def test_new_tournament_typical():
     my_tournament = Tournament("Australian Open", my_data)
     info = str(my_tournament)
     assert info == "Australian Open"
+
+
+def test_listing_players():
+    my_data = Dataset(2001, "test_data/players")
+    info = my_data.get_players_with_name("Ja")
+    assert len(info) == 2
+
+
+def test_matches_won():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    info = my_player.get_matches_won()
+    assert info == 0
+
+
+def test_matches_played():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    info = my_player.get_matches_played()
+    assert info == 1
