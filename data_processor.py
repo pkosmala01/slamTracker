@@ -9,19 +9,23 @@ class Dataset:
         self._tournaments_list = []
         columns = ["winner_name", "winner_id", "winner_ioc"]
         headers = ["name", "player_id", "nationality"]
-        self._players_list = self.create_unique_list_from_all(columns, headers, self._players_list)
+        self._players_list = self.create_unique_list_from_all(
+                columns, headers, self._players_list)
         columns = ["loser_name", "loser_id", "loser_ioc"]
-        self._players_list = self.create_unique_list_from_all(columns, headers, self._players_list)
+        self._players_list = self.create_unique_list_from_all(
+                columns, headers, self._players_list)
         columns = ["tourney_name"]
         headers = ["name"]
-        self._tournaments_list = self.create_unique_list_from_all(columns, headers, self._tournaments_list)
+        self._tournaments_list = self.create_unique_list_from_all(
+            columns, headers, self._tournaments_list)
 
     def create_unique_list_from_all(self, columns, headers, item_list):
         last_year = self._last_year
         path = self._path
         for year in range(2000, last_year + 1):
             temp_path = path + str(year) + ".csv"
-            item_list = self.create_unique_list(temp_path, item_list, columns, headers)
+            item_list = self.create_unique_list(
+                    temp_path, item_list, columns, headers)
         return item_list
 
     def create_unique_list(self, path, item_list, columns, headers):
@@ -81,7 +85,8 @@ class Player:
 
     def create_matches_list(self):
         player_id = self._player_id
-        columns = ["winner_id", "loser_id", "tourney_name", "surface", "tourney_date"]
+        columns = [
+            "winner_id", "loser_id", "tourney_name", "surface", "tourney_date"]
         temp_list = self._dataset.create_dataframe(columns)
         matches_list = temp_list[temp_list["winner_id"] == player_id]
         self._matches_won = len(matches_list)
@@ -90,11 +95,33 @@ class Player:
         self._matches_played = len(matches_list)
         return matches_list
 
-    def get_matches_won(self):
+    def list_of_matches_against(self):
+        other_id = self._other_player.player_id()
+        temp_list = self._matches_list
+        matches_against = temp_list[temp_list["loser_id"] == other_id]
+        self._vs_matches_won = len(matches_against)
+        temp_list = temp_list[temp_list["winner_id"] == other_id]
+        matches_against = matches_against.append(temp_list)
+        self._vs_matches_played = len(matches_against)
+        self._matches_against = matches_against
+
+    def set_other_player(self, player):
+        self._other_player = player
+
+    def matches_won(self):
         return self._matches_won
 
-    def get_matches_played(self):
+    def matches_played(self):
         return self._matches_played
+
+    def player_id(self):
+        return self._player_id
+
+    def vs_matches_played(self):
+        return self._vs_matches_played
+
+    def vs_matches_won(self):
+        return self._vs_matches_won
 
 
 class Tournament:

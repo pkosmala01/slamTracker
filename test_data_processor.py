@@ -1,3 +1,4 @@
+# import pytest
 from data_processor import Dataset, Player, Tournament
 
 
@@ -43,12 +44,32 @@ def test_listing_players():
 def test_matches_won():
     my_data = Dataset(2001, "test_data/players")
     my_player = Player("Alex Lopez Moron", my_data)
-    info = my_player.get_matches_won()
+    info = my_player.matches_won()
     assert info == 0
 
 
 def test_matches_played():
     my_data = Dataset(2001, "test_data/players")
     my_player = Player("Alex Lopez Moron", my_data)
-    info = my_player.get_matches_played()
+    info = my_player.matches_played()
+    assert info == 1
+
+
+def test_vs_matches_played():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    my_player_2 = Player("Jason Stoltenberg", my_data)
+    my_player_2.set_other_player(my_player)
+    my_player_2.list_of_matches_against()
+    info = my_player_2.vs_matches_played()
+    assert info == 1
+
+
+def test_vs_matches_won():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    my_player_2 = Player("Jason Stoltenberg", my_data)
+    my_player_2.set_other_player(my_player)
+    my_player_2.list_of_matches_against()
+    info = my_player_2.vs_matches_won()
     assert info == 1
