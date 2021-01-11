@@ -32,7 +32,7 @@ def test_new_tournament_typical():
     my_data = Dataset(2001, "test_data/tournaments")
     my_tournament = Tournament("Australian Open", my_data)
     info = str(my_tournament)
-    assert info == "Australian Open"
+    assert info == "Australian Open, surface: Hard"
 
 
 def test_listing_players():
@@ -70,6 +70,54 @@ def test_vs_matches_won():
     my_player_2 = Player("Jason Stoltenberg", my_data)
     my_player_2.set_other_player(my_player)
     info = my_player_2.vs_matches_won()
+    assert info == 1
+
+
+def test_same_surface_won():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jeff Tarango", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.same_surface_won()
+    assert info == 7
+
+
+def test_same_surface_played():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jeff Tarango", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.same_surface_played()
+    assert info == 8
+
+
+def test_same_surface_vs_played():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.same_surface_vs_played()
+    assert info == 1
+
+
+def test_same_surface_vs_won():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.same_surface_vs_won()
     assert info == 1
 
 

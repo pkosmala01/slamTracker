@@ -15,8 +15,8 @@ class Dataset:
         columns = ["loser_name", "loser_id", "loser_ioc"]
         self._players_list = self.create_unique_list_from_all(
                 columns, headers, self._players_list)
-        columns = ["tourney_name"]
-        headers = ["name"]
+        columns = ["tourney_name", "surface"]
+        headers = ["name", "surface"]
         self._tournaments_list = self.create_unique_list_from_all(
             columns, headers, self._tournaments_list)
 
@@ -50,6 +50,11 @@ class Dataset:
             if name in player["name"]:
                 pl_list.append(player["name"])
         return pl_list
+
+    def get_tournament_surface(self, name):
+        for tournament in self._tournaments_list:
+            if tournament["name"] == name:
+                return tournament["surface"]
 
     def create_dataframe(self, columns):
         last_year = self._last_year
@@ -116,10 +121,35 @@ class Player:
         self._vs_matches_played = len(matches_against)
         self._matches_against = matches_against
 
+    def same_surface_stats(self):
+        surface = self._tournament.surface()
+        player_id = self._player_id
+        same_surface_won = 0
+        same_surface_played = 0
+        for match in self._matches_list.values:
+            if match[1] == surface:
+                same_surface_played += 1
+                if match[3] == player_id:
+                    same_surface_won += 1
+        self._same_surface_won = same_surface_won
+        self._same_surface_played = same_surface_played
+        same_surface_vs_won = 0
+        same_surface_vs_played = 0
+        for match in self._matches_against.values:
+            if match[1] == surface:
+                same_surface_vs_played += 1
+                if match[3] == player_id:
+                    same_surface_vs_won += 1
+        self._same_surface_vs_won = same_surface_vs_won
+        self._same_surface_vs_played = same_surface_vs_played
+
     def set_other_player(self, player):
         self._other_player = player
         self.list_of_matches_against()
-        self.same_surface_matches()
+
+    def set_tournament(self, tournament):
+        self._tournament = tournament
+        self.same_surface_stats()
 
     def matches_won(self):
         return self._matches_won
@@ -136,6 +166,18 @@ class Player:
     def vs_matches_won(self):
         return self._vs_matches_won
 
+    def same_surface_played(self):
+        return self._same_surface_played
+
+    def same_surface_won(self):
+        return self._same_surface_won
+
+    def same_surface_vs_played(self):
+        return self._same_surface_vs_played
+
+    def same_surface_vs_won(self):
+        return self._same_surface_vs_won
+
     def first_match(self):
         return self._first_match.date()
 
@@ -144,11 +186,16 @@ class Tournament:
     def __init__(self, name, dataset):
         self._name = name
         self._dataset = dataset
+        self._surface = dataset.get_tournament_surface(name)
 
     def __str__(self):
         name = self._name
-        info = f'{name}'
+        surface = self._surface
+        info = f'{name}, surface: {surface}'
         return info
+
+    def surface(self):
+        return self._surface
 
 
 if __name__ == "__main__":
@@ -175,3 +222,5 @@ if __name__ == "__main__":
     print(my_player_2._matches_against)
     print(my_player.first_match())
     print(my_player_2.first_match())
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
