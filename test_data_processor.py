@@ -60,7 +60,6 @@ def test_vs_matches_played():
     my_player = Player("Alex Lopez Moron", my_data)
     my_player_2 = Player("Jason Stoltenberg", my_data)
     my_player_2.set_other_player(my_player)
-    my_player_2.list_of_matches_against()
     info = my_player_2.vs_matches_played()
     assert info == 1
 
@@ -70,6 +69,19 @@ def test_vs_matches_won():
     my_player = Player("Alex Lopez Moron", my_data)
     my_player_2 = Player("Jason Stoltenberg", my_data)
     my_player_2.set_other_player(my_player)
-    my_player_2.list_of_matches_against()
     info = my_player_2.vs_matches_won()
     assert info == 1
+
+
+def test_first_match_loser():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    info = my_player.first_match()
+    assert str(info) == "2000-05-01"
+
+
+def test_first_match_winner():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Greg Rusedski", my_data)
+    info = my_player.first_match()
+    assert str(info) == "2001-01-15"

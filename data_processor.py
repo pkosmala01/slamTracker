@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 
 
@@ -90,8 +91,18 @@ class Player:
         temp_list = self._dataset.create_dataframe(columns)
         matches_list = temp_list[temp_list["winner_id"] == player_id]
         self._matches_won = len(matches_list)
+        if not matches_list.empty:
+            first_match_winner = matches_list["tourney_date"].iloc[0]
+        else:
+            first_match_winner = 99999999
         temp_list = temp_list[temp_list["loser_id"] == player_id]
         matches_list = matches_list.append(temp_list)
+        if not temp_list.empty:
+            first_match_loser = temp_list["tourney_date"].iloc[0]
+        else:
+            first_match_loser = 99999999
+        first_match = str(min(first_match_loser, first_match_winner))
+        self._first_match = datetime.strptime(first_match, '%Y%m%d')
         self._matches_played = len(matches_list)
         return matches_list
 
@@ -107,6 +118,8 @@ class Player:
 
     def set_other_player(self, player):
         self._other_player = player
+        self.list_of_matches_against()
+        self.same_surface_matches()
 
     def matches_won(self):
         return self._matches_won
@@ -122,6 +135,9 @@ class Player:
 
     def vs_matches_won(self):
         return self._vs_matches_won
+
+    def first_match(self):
+        return self._first_match.date()
 
 
 class Tournament:
@@ -146,4 +162,16 @@ if __name__ == "__main__":
             player_choice = int(input("Choose a player: "))
             my_player = Player(temp_list[player_choice], my_data)
             break
-    print(str(my_player))
+    while True:
+        player_name = input("Enter a player's name: ")
+        temp_list = my_data.get_players_with_name(player_name)
+        for player in temp_list:
+            print(f'{temp_list.index(player)}: {player}')
+        if len(temp_list) > 0:
+            player_choice = int(input("Choose a player: "))
+            my_player_2 = Player(temp_list[player_choice], my_data)
+            my_player_2.set_other_player(my_player)
+            break
+    print(my_player_2._matches_against)
+    print(my_player.first_match())
+    print(my_player_2.first_match())
