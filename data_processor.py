@@ -84,15 +84,16 @@ class Player:
 
     def __str__(self):
         name = self._name
-        player_id = self._player_id
+        player_id = self.player_id()
         nationality = self._nationality
         info = f'{name}, id: {player_id}, nationality: {nationality}'
         return info
 
     def create_matches_list(self):
-        player_id = self._player_id
+        player_id = self.player_id()
         columns = [
-            "winner_id", "loser_id", "tourney_name", "surface", "tourney_date"]
+            "winner_id", "loser_id", "tourney_name", "surface",
+            "tourney_date", "draw_size", "match_num", "tourney_level"]
         temp_list = self._dataset.create_dataframe(columns)
         matches_list = temp_list[temp_list["winner_id"] == player_id]
         self._matches_won = len(matches_list)
@@ -115,33 +116,85 @@ class Player:
         other_id = self._other_player.player_id()
         temp_list = self._matches_list
         matches_against = temp_list[temp_list["loser_id"] == other_id]
-        self._vs_matches_won = len(matches_against)
+        if not matches_against.empty:
+            self._vs_matches_won = len(matches_against)
+        else:
+            self._vs_matches_won = 0
         temp_list = temp_list[temp_list["winner_id"] == other_id]
         matches_against = matches_against.append(temp_list)
-        self._vs_matches_played = len(matches_against)
+        if not matches_against.empty:
+            self._vs_matches_played = len(matches_against)
+        else:
+            self._vs_matches_played = 0
         self._matches_against = matches_against
 
     def same_surface_stats(self):
         surface = self._tournament.surface()
-        player_id = self._player_id
+        player_id = self.player_id()
         same_surface_won = 0
         same_surface_played = 0
         for match in self._matches_list.values:
             if match[1] == surface:
                 same_surface_played += 1
-                if match[3] == player_id:
+                if match[6] == player_id:
                     same_surface_won += 1
         self._same_surface_won = same_surface_won
         self._same_surface_played = same_surface_played
         same_surface_vs_won = 0
         same_surface_vs_played = 0
-        for match in self._matches_against.values:
-            if match[1] == surface:
-                same_surface_vs_played += 1
-                if match[3] == player_id:
-                    same_surface_vs_won += 1
-        self._same_surface_vs_won = same_surface_vs_won
-        self._same_surface_vs_played = same_surface_vs_played
+        if not self._matches_against.empty:
+            for match in self._matches_against.values:
+                if match[1] == surface:
+                    same_surface_vs_played += 1
+                    if match[6] == player_id:
+                        same_surface_vs_won += 1
+            self._same_surface_vs_won = same_surface_vs_won
+            self._same_surface_vs_played = same_surface_vs_played
+        else:
+            self._same_surface_vs_won = 0
+            self._same_surface_vs_played = 0
+
+    def tournament_stats(self):
+        tournament_name = self._tournament.name()
+        player_id = self.player_id()
+        round_names = [
+            "zwycięstwo", "finał", "1/2", "1/4",
+            "1/8", "1/16", "1/32", "1/64", "1/128", "b/d"
+        ]
+        best_finish = 9
+        best_finish_tournament = 9
+        best_finish_grand_slam = 9
+        titles = 0
+        for match in self._matches_list.values:
+            print(match)
+            draw_size = match[2]
+            match_num = match[5]
+            finish = 9
+            if match_num == draw_size - 1:
+                if player_id == match[6]:
+                    finish = 0
+                    titles += 1
+                else:
+                    finish = 1
+            else:
+                temp_num = draw_size
+                round_num = 0
+                while temp_num > 0:
+                    if temp_num < match_num:
+                        finish = round_num
+                        break
+                    else:
+                        temp_num -= 2**round_num
+                        round_num += 1
+            best_finish = min(finish, best_finish)
+            if tournament_name == match[0]:
+                best_finish_tournament = min(finish, best_finish_tournament)
+            if match[3] == "G":
+                best_finish_grand_slam = min(finish, best_finish_grand_slam)
+        self._best_finish = round_names[best_finish]
+        self._best_finish_tournament = round_names[best_finish_tournament]
+        self._best_finish_grand_slam = round_names[best_finish_grand_slam]
+        self._titles = titles
 
     def set_other_player(self, player):
         self._other_player = player
@@ -150,6 +203,7 @@ class Player:
     def set_tournament(self, tournament):
         self._tournament = tournament
         self.same_surface_stats()
+        self.tournament_stats()
 
     def matches_won(self):
         return self._matches_won
@@ -181,6 +235,15 @@ class Player:
     def first_match(self):
         return self._first_match.date()
 
+    def best_finish(self):
+        return self._best_finish
+
+    def best_finish_tournament(self):
+        return self._best_finish_tournament
+
+    def best_finish_grand_slam(self):
+        return self._best_finish_grand_slam
+
 
 class Tournament:
     def __init__(self, name, dataset):
@@ -193,6 +256,9 @@ class Tournament:
         surface = self._surface
         info = f'{name}, surface: {surface}'
         return info
+
+    def name(self):
+        return self._name
 
     def surface(self):
         return self._surface
@@ -224,3 +290,7 @@ if __name__ == "__main__":
     print(my_player_2.first_match())
     my_tournament = Tournament("Australian Open", my_data)
     my_player_2.set_tournament(my_tournament)
+    print(my_player_2._best_finish)
+    print(my_player_2._best_finish_tournament)
+    print(my_player_2._best_finish_grand_slam)
+    print(my_player_2._titles)

@@ -73,6 +73,24 @@ def test_vs_matches_won():
     assert info == 1
 
 
+def test_vs_matches_played_no_matches():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    my_player_2 = Player("Jeff Tarango", my_data)
+    my_player_2.set_other_player(my_player)
+    info = my_player_2.vs_matches_played()
+    assert info == 0
+
+
+def test_vs_matches_won_no_matches():
+    my_data = Dataset(2001, "test_data/players")
+    my_player = Player("Alex Lopez Moron", my_data)
+    my_player_2 = Player("Jeff Tarango", my_data)
+    my_player_2.set_other_player(my_player)
+    info = my_player_2.vs_matches_won()
+    assert info == 0
+
+
 def test_same_surface_won():
     my_data = Dataset(2001, "test_data/tournaments")
     my_player = Player("Jeff Tarango", my_data)
@@ -121,6 +139,30 @@ def test_same_surface_vs_won():
     assert info == 1
 
 
+def test_same_surface_vs_played_no_matches():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Jeff Tarango", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.same_surface_vs_played()
+    assert info == 0
+
+
+def test_same_surface_vs_won_no_matches():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Jeff Tarango", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.same_surface_vs_won()
+    assert info == 0
+
+
 def test_first_match_loser():
     my_data = Dataset(2001, "test_data/players")
     my_player = Player("Alex Lopez Moron", my_data)
@@ -133,3 +175,51 @@ def test_first_match_winner():
     my_player = Player("Greg Rusedski", my_data)
     info = my_player.first_match()
     assert str(info) == "2001-01-15"
+
+
+def test_best_finish():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.best_finish()
+    assert info == "zwycięstwo"
+
+
+def test_best_finish_tournament():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.best_finish_tournament()
+    assert info == "1/16"
+
+
+def test_best_finish_grand_slam():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Lleyton Hewitt", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.best_finish_grand_slam()
+    assert info == "1/16"
+
+
+def test_best_finish_no_start():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Alex Lopez Moron", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.best_finish_grand_slam()
+    assert info == "b/d"
