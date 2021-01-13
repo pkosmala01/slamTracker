@@ -1,3 +1,5 @@
 **/.vscode
 **/__pycache__
 **/.pytest_cache
+**/search_window.ui
+**/stats_window.ui
