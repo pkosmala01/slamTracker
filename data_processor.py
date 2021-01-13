@@ -1,5 +1,6 @@
 from datetime import datetime
 import pandas as pd
+from exceptions import NoPlayerError
 
 
 class Dataset:
@@ -30,6 +31,10 @@ class Dataset:
         return item_list
 
     def create_unique_list(self, path, item_list, columns, headers):
+        try:
+            data = pd.read_csv(path, usecols=columns)
+        except(FileNotFoundError):
+            print('Wrong path, may be caused by a wrong value of last_year')
         data = pd.read_csv(path, usecols=columns)
         for item in data[columns].values:
             unique_item = {}
@@ -40,9 +45,13 @@ class Dataset:
         return item_list
 
     def get_player_data_from_name(self, name):
+        player_data = None
         for player in self._players_list:
             if player["name"] == name:
-                return player
+                player_data = player
+                return player_data
+        if player_data is None:
+            raise(NoPlayerError)
 
     def get_players_with_name(self, name):
         pl_list = []
@@ -59,10 +68,17 @@ class Dataset:
     def create_dataframe(self, columns):
         last_year = self._last_year
         path = self._path
-        data = pd.read_csv(path + "2000.csv", usecols=columns)
+        try:
+            data = pd.read_csv(path + "2000.csv", usecols=columns)
+        except(FileNotFoundError):
+            print('Wrong path, may be caused by a wrong value of last_year')
         for year in range(2001, last_year + 1):
             temp_path = path + str(year) + ".csv"
-            temp_data = pd.read_csv(temp_path, usecols=columns)
+            try:
+                temp_data = pd.read_csv(temp_path, usecols=columns)
+            except(FileNotFoundError):
+                print(
+                    'Wrong path, may be caused by a wrong value of last_year')
             data = data.append(temp_data, ignore_index=True)
         return data
 
@@ -243,6 +259,9 @@ class Player:
 
     def best_finish_grand_slam(self):
         return self._best_finish_grand_slam
+
+    def titles(self):
+        return self._titles
 
 
 class Tournament:

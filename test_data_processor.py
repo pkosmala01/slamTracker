@@ -1,5 +1,6 @@
-# import pytest
+import pytest
 from data_processor import Dataset, Player, Tournament
+from exceptions import NoPlayerError
 
 
 def test_dataset_typical_players():
@@ -14,6 +15,11 @@ def test_dataset_typical_tournaments():
     assert len(info) == 5
 
 
+def test_wrong_path():
+    with pytest.raises(FileNotFoundError):
+        Dataset(2002, "test_data/players")
+
+
 def test_new_player_typical_loser():
     my_data = Dataset(2001, "test_data/players")
     my_player = Player("Alex Lopez Moron", my_data)
@@ -26,6 +32,12 @@ def test_new_player_typical_winner():
     my_player = Player("Jan Siemerink", my_data)
     info = str(my_player)
     assert info == "Jan Siemerink, id: 101733, nationality: NED"
+
+
+def test_no_player():
+    my_data = Dataset(2001, "test_data/players")
+    with pytest.raises(NoPlayerError):
+        Player("Jerzy Janowicz", my_data)
 
 
 def test_new_tournament_typical():
@@ -223,3 +235,15 @@ def test_best_finish_no_start():
     my_player_2.set_tournament(my_tournament)
     info = my_player_2.best_finish_grand_slam()
     assert info == "b/d"
+
+
+def test_titles():
+    my_data = Dataset(2001, "test_data/tournaments")
+    my_player = Player("Jonas Bjorkman", my_data)
+    my_player_2 = Player("Andre Agassi", my_data)
+    my_player.set_other_player(my_player_2)
+    my_player_2.set_other_player(my_player)
+    my_tournament = Tournament("Australian Open", my_data)
+    my_player_2.set_tournament(my_tournament)
+    info = my_player_2.titles()
+    assert info == 1
