@@ -53,6 +53,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit = QLineEdit(self.centralwidget)
         self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setClearButtonEnabled(False)
 
         self.verticalLayout.addWidget(self.lineEdit)
 
@@ -86,6 +87,7 @@ class Ui_MainWindow(object):
 
         self.NextButton = QPushButton(self.centralwidget)
         self.NextButton.setObjectName(u"NextButton")
+        self.NextButton.setEnabled(False)
 
         self.gridLayout.addWidget(self.NextButton, 1, 1, 1, 1)
 
@@ -97,6 +99,12 @@ class Ui_MainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        QWidget.setTabOrder(self.lineEdit, self.listWidget)
+        QWidget.setTabOrder(self.listWidget, self.lineEdit_2)
+        QWidget.setTabOrder(self.lineEdit_2, self.listWidget_2)
+        QWidget.setTabOrder(self.listWidget_2, self.lineEdit_3)
+        QWidget.setTabOrder(self.lineEdit_3, self.listWidget_3)
+        QWidget.setTabOrder(self.listWidget_3, self.NextButton)
 
         self.retranslateUi(MainWindow)
 

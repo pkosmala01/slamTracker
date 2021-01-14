@@ -60,6 +60,14 @@ class Dataset:
                 pl_list.append(player["name"])
         return pl_list
 
+    def get_tournaments_with_name(self, name):
+        tournament_list = []
+        for tournament in self._tournaments_list:
+            if name in tournament["name"]:
+                if tournament["name"] not in tournament_list:
+                    tournament_list.append(tournament["name"])
+        return tournament_list
+
     def get_tournament_surface(self, name):
         for tournament in self._tournaments_list:
             if tournament["name"] == name:
@@ -182,7 +190,6 @@ class Player:
         best_finish_grand_slam = 9
         titles = 0
         for match in self._matches_list.values:
-            print(match)
             draw_size = match[2]
             match_num = match[5]
             finish = 9
@@ -220,6 +227,12 @@ class Player:
         self._tournament = tournament
         self.same_surface_stats()
         self.tournament_stats()
+
+    def name(self):
+        return self._name
+
+    def nationality(self):
+        return self._nationality
 
     def matches_won(self):
         return self._matches_won
