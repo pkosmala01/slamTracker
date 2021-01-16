@@ -112,7 +112,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Slam Tracker", None))
         self.actionOd_poczatku.setText(QCoreApplication.translate("MainWindow", u"Od pocz\u0105tku", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Zawodnik 2", None))
         self.lineEdit_2.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Wpisz nazwisko...", None))

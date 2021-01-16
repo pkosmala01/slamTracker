@@ -1,5 +1,6 @@
 import sys
 from PySide2.QtWidgets import QApplication, QMainWindow
+from PySide2.QtCharts import QtCharts
 import ui_search_window
 import ui_stats_window
 from data_processor import Dataset, Player, Tournament
@@ -128,6 +129,40 @@ class StatsWindow(QMainWindow):
         self.ui.player_2_titles.setText(str(player_2.titles()))
         self.ui.player_2_best_finish_tournament.setText(
             player_2.best_finish_tournament())
+        self.create_matches_chart(self._player_1, self._player_2)
+        self.create_same_surface_matches_chart(self._player_1, self._player_2)
+
+    def create_matches_chart(self, player_1, player_2):
+        if player_1.vs_matches_played() == 0:
+            chart = QtCharts.QChart()
+            chart.setTitle("Brak bezpośrednich starć")
+            self.ui.chartView.setChart(chart)
+            return
+        series = QtCharts.QPieSeries()
+        label = f'{player_1.name()} - {player_1.vs_matches_won()}'
+        series.append(label, player_1.vs_matches_won())
+        label = f'{player_2.name()} - {player_2.vs_matches_won()}'
+        series.append(label, player_2.vs_matches_won())
+        chart = QtCharts.QChart()
+        chart.addSeries(series)
+        chart.setTitle("Zwycięstwa w bezpośrednich starciach")
+        self.ui.chartView.setChart(chart)
+
+    def create_same_surface_matches_chart(self, player_1, player_2):
+        if player_1.same_surface_vs_played() == 0:
+            chart = QtCharts.QChart()
+            chart.setTitle("Brak starć na nawierzchni turnieju")
+            self.ui.chartView_2.setChart(chart)
+            return
+        series = QtCharts.QPieSeries()
+        label = f'{player_1.name()} - {player_1.same_surface_vs_won()}'
+        series.append(label, player_1.same_surface_vs_won())
+        label = f'{player_2.name()} - {player_2.same_surface_vs_won()}'
+        series.append(label, player_2.same_surface_vs_won())
+        chart = QtCharts.QChart()
+        chart.addSeries(series)
+        chart.setTitle("Bezpośrednie starcia na nawierzchni turnieju")
+        self.ui.chartView_2.setChart(chart)
 
     def set_search_window(self, search_window):
         self._search_window = search_window
