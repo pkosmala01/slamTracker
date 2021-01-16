@@ -151,7 +151,7 @@ class StatsWindow(QMainWindow):
     def create_same_surface_matches_chart(self, player_1, player_2):
         if player_1.same_surface_vs_played() == 0:
             chart = QtCharts.QChart()
-            chart.setTitle("Brak starć na nawierzchni turnieju")
+            chart.setTitle("Brak bezpośrednich starć na nawierzchni turnieju")
             self.ui.chartView_2.setChart(chart)
             return
         series = QtCharts.QPieSeries()
@@ -161,7 +161,7 @@ class StatsWindow(QMainWindow):
         series.append(label, player_2.same_surface_vs_won())
         chart = QtCharts.QChart()
         chart.addSeries(series)
-        chart.setTitle("Bezpośrednie starcia na nawierzchni turnieju")
+        chart.setTitle("Bezpośredni bilans na nawierzchni turnieju")
         self.ui.chartView_2.setChart(chart)
 
     def set_search_window(self, search_window):
