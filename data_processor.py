@@ -294,35 +294,3 @@ class Tournament:
 
     def surface(self):
         return self._surface
-
-
-if __name__ == "__main__":
-    my_data = Dataset(2015, "data/atp_matches_")
-    while True:
-        player_name = input("Enter a player's name: ")
-        temp_list = my_data.get_players_with_name(player_name)
-        for player in temp_list:
-            print(f'{temp_list.index(player)}: {player}')
-        if len(temp_list) > 0:
-            player_choice = int(input("Choose a player: "))
-            my_player = Player(temp_list[player_choice], my_data)
-            break
-    while True:
-        player_name = input("Enter a player's name: ")
-        temp_list = my_data.get_players_with_name(player_name)
-        for player in temp_list:
-            print(f'{temp_list.index(player)}: {player}')
-        if len(temp_list) > 0:
-            player_choice = int(input("Choose a player: "))
-            my_player_2 = Player(temp_list[player_choice], my_data)
-            my_player_2.set_other_player(my_player)
-            break
-    print(my_player_2._matches_against)
-    print(my_player.first_match())
-    print(my_player_2.first_match())
-    my_tournament = Tournament("Australian Open", my_data)
-    my_player_2.set_tournament(my_tournament)
-    print(my_player_2._best_finish)
-    print(my_player_2._best_finish_tournament)
-    print(my_player_2._best_finish_grand_slam)
-    print(my_player_2._titles)
